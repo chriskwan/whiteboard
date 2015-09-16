@@ -4,6 +4,7 @@
 	var colors = ["black", "red", "blue", "green"];
 	var drawingArea = document.getElementById("drawingArea");
 	var context = drawingArea.getContext("2d");
+	var penColor = pickRandomColor();
 
 	var peer;
 
@@ -34,17 +35,17 @@
 				y: event.clientY - rect.top
 			};
 			pathToDraw.push(point);
-			drawPoint(point);
+			drawPoint(point, penColor);
 		}
 
 		drawingArea.onmouseup = function (event) {
 			//drawPath(pathToDraw);
-			sendPathToPeers(pathToDraw);
+			sendPathToPeers(pathToDraw, penColor);
 			isDrawing = false;
 		}
 	}
 
-	function sendPathToPeers(path) {
+	function sendPathToPeers(path, color) {
 		for (var currentPeerId in peer.connections) {
 			if (!peer.connections.hasOwnProperty(currentPeerId)) {
 				return;
@@ -55,21 +56,21 @@
 			// It's possible to have multiple connections with the same peer,
 			// so send on all of them
 			for (var i=0; i<connectionsWithCurrentPeer.length; i++) {
-				connectionsWithCurrentPeer[i].send(path);
+				connectionsWithCurrentPeer[i].send({path: path, color: color});
 			}
 		}
 	}
 
-	function drawPoint(point) {
+	function drawPoint(point, color) {
+		context.fillStyle = color;
 		context.fillRect(point.x, point.y, 5, 5);
 	}
 
-	function drawPath(path) {
-		context.fillStyle = pickRandomColor();
-
+	function drawPath(path, color) {
+		var peerContext
 		for (var i=0; i<path.length; i++) {
 			var point = path[i];
-			drawPoint(point);
+			drawPoint(point, color);
 		}
 	}
 
@@ -121,7 +122,7 @@
 	function setUpCanvasForConnection(conn) {
 		conn.on('data', function (data) {
 			console.log("Received data from " + conn.peer + ": " + data);
-			drawPath(data);
+			drawPath(data.path, data.color);
 		});
 	}
 
