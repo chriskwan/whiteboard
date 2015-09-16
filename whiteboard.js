@@ -16,28 +16,37 @@
 	}
 
 	function setUpCanvasEvents(){
-		drawingArea.onmousedown = function (event) {
-			isDrawing = true;
+		drawingArea.onmousedown = startDraw;
+		drawingArea.ontouchstart = startDraw;
+
+		drawingArea.onmousemove = draw;
+		drawingArea.ontouchmove = draw;
+
+		drawingArea.onmouseup = endDraw;
+		drawingArea.ontouchend = endDraw;
+	}
+
+	function startDraw(event) {
+		isDrawing = true;
+	}
+
+	function draw(event) {
+		if (!isDrawing) {
+			return;
 		}
 
-		drawingArea.onmousemove = function (event) {
-			if (!isDrawing) {
-				return;
-			}
+		var rect = drawingArea.getBoundingClientRect();
+		var point = {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top
+		};
 
-			var rect = drawingArea.getBoundingClientRect();
-			var point = {
-				x: event.clientX - rect.left,
-				y: event.clientY - rect.top
-			};
+		drawPoint(point, penColor);
+		sendPointToPeers(point, penColor);
+	}
 
-			drawPoint(point, penColor);
-			sendPointToPeers(point, penColor);
-		}
-
-		drawingArea.onmouseup = function (event) {
-			isDrawing = false;
-		}
+	function endDraw(event) {
+		isDrawing = false;
 	}
 
 	function sendPointToPeers(point, color) {
