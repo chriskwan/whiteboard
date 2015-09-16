@@ -163,9 +163,14 @@
 
 	function setUpCanvasForConnection(conn) {
 		conn.on('data', function (data) {
-			debugger;
 			if (data.connections) {
-				debugger;
+				for (var i=0; i<data.connections.length; i++) {
+					var peerId = data.connections[i];
+					// Not already connected to this peer and not myself
+					if (!peer.connections.hasOwnProperty(peerId) && peerId !== peer.id) {
+						connectToPeer(peerId);
+					}
+				}
 			} else if (data.point && data.color) {
 				drawPoint(data.point, data.color);
 			} else {
