@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+	<title>Whiteboard</title>
+</head>
+<body>
+	<h1>Whiteboard</h1>
+
+	<div>
+		Your Peer ID: <span id="mypeerid"></span>
+	</div>
+
+	<div>
+		<label for="peerIdInput">Friend's Peer ID: </label>
+		<input id="peerIdInput" type="text"></input>
+		<button id="connectBtn">Connect</button>
+	</div>
+
+	<h3>Hold your mouse down to draw</h3>
+
+	<form id="colorChooser"></form>
+
+	<canvas id="drawingArea" width="800" height="500" style="border:1px solid">
+	</canvas>
+
+	<script type="text/javascript" src="https://rawgit.com/peers/peerjs/master/dist/peer.js"></script>
+	<script type="text/javascript" src="whiteboard.js"></script>
+</body>
+</html>
