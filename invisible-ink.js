@@ -1,6 +1,5 @@
 (function () {
 	var isDrawing = false;
-	var pathToDraw = [];
 	var colors = ["black", "red", "blue", "green"];
 	var drawingArea = document.getElementById("drawingArea");
 	var context = drawingArea.getContext("2d");
@@ -18,9 +17,6 @@
 
 	function setUpCanvasEvents(){
 		drawingArea.onmousedown = function (event) {
-			// Reset path
-			pathToDraw = [];
-
 			isDrawing = true;
 		}
 
@@ -34,15 +30,30 @@
 				x: event.clientX - rect.left,
 				y: event.clientY - rect.top
 			};
-			pathToDraw.push(point);
+
 			drawPoint(point, penColor);
+			sendPointToPeers(point, penColor);
 		}
 
 		drawingArea.onmouseup = function (event) {
-			//drawPath(pathToDraw);
-			sendPathToPeers(pathToDraw, penColor);
 			isDrawing = false;
 		}
+	}
+
+	function sendPointToPeers(point, color) {
+		for (var currentPeerId in peer.connections) {
+			if (!peer.connections.hasOwnProperty(currentPeerId)) {
+				return;
+			}
+
+			var connectionsWithCurrentPeer = peer.connections[currentPeerId];
+
+			// It's possible to have multiple connections with the same peer,
+			// so send on all of them
+			for (var i=0; i<connectionsWithCurrentPeer.length; i++) {
+				connectionsWithCurrentPeer[i].send({point: point, color: color});
+			}
+		}	
 	}
 
 	function sendPathToPeers(path, color) {
@@ -142,7 +153,7 @@
 	function setUpCanvasForConnection(conn) {
 		conn.on('data', function (data) {
 			console.log("Received data from " + conn.peer + ": " + data);
-			drawPath(data.path, data.color);
+			drawPoint(data.point, data.color);
 		});
 	}
 
