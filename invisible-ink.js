@@ -5,10 +5,14 @@
 	var drawingArea = document.getElementById("drawingArea");
 	var context = drawingArea.getContext("2d");
 
+	var peer;
+
 	initialize();
 
 	function initialize() {
 		setUpCanvasEvents();
+		setUpUI();
+		setUpPeer();
 	}
 
 	function setUpCanvasEvents(){
@@ -34,8 +38,25 @@
 		}
 
 		drawingArea.onmouseup = function (event) {
-			drawPath();
+			//drawPath(pathToDraw);
+			sendPathToPeers(pathToDraw);
 			isDrawing = false;
+		}
+	}
+
+	function sendPathToPeers(path) {
+		for (var currentPeerId in peer.connections) {
+			if (!peer.connections.hasOwnProperty(currentPeerId)) {
+				return;
+			}
+
+			var connectionsWithCurrentPeer = peer.connections[currentPeerId];
+
+			// It's possible to have multiple connections with the same peer,
+			// so send on all of them
+			for (var i=0; i<connectionsWithCurrentPeer.length; i++) {
+				connectionsWithCurrentPeer[i].send(path);
+			}
 		}
 	}
 
@@ -43,11 +64,11 @@
 		context.fillRect(point.x, point.y, 5, 5);
 	}
 
-	function drawPath() {
+	function drawPath(path) {
 		context.fillStyle = pickRandomColor();
 
-		for (var i=0; i<pathToDraw.length; i++) {
-			var point = pathToDraw[i];
+		for (var i=0; i<path.length; i++) {
+			var point = path[i];
 			drawPoint(point);
 		}
 	}
@@ -57,4 +78,51 @@
 		var index = Math.floor( ( Math.random() * colors.length ) );
 		return colors[index];
 	}
+
+	function setUpUI() {
+		// Button to connect to a peer
+		document.getElementById("connectBtn").onclick = function () {
+			var requestedPeer = document.getElementById("peerIdInput").value;
+			connectToPeer(requestedPeer);
+		};
+	}
+
+	// Sending a connection to a peer (i.e.: you hit the Connect button)
+	function connectToPeer(peerId) {
+		var conn = peer.connect(peerId);
+
+		// Connection has been established
+		conn.on('open', function () {
+			setUpCanvasForConnection(conn);
+		});
+	}
+
+	function setUpPeer() {
+		peer = new Peer({
+			key: 'lwjd5qra8257b9', //cwkTODO this is the demo api key
+			debug: 3
+		});
+
+		// Initialization - ready to receive connections
+		peer.on('open', function (id) {
+			console.log('My peer ID is: ' + id);
+
+			document.getElementById("mypeerid").innerHTML = id;
+		});
+
+		// Receiving a connection from a peer (i.e.: they hit the Connect button)
+		peer.on('connection', function (conn) {
+			console.log("Connected to by " + conn.peer);
+
+			setUpCanvasForConnection(conn);
+		});
+	}
+
+	function setUpCanvasForConnection(conn) {
+		conn.on('data', function (data) {
+			console.log("Received data from " + conn.peer + ": " + data);
+			drawPath(data);
+		});
+	}
+
 })();
