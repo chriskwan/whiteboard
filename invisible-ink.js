@@ -147,13 +147,30 @@
 			console.log("Connected to by " + conn.peer);
 
 			setUpCanvasForConnection(conn);
+
+			conn.on('open', function () {
+				conn.send("thanks for connecting. here are my connections");
+				var connections = [];
+				for (var peerId in peer.connections) {
+					if (peer.connections.hasOwnProperty(peerId)) {
+						connections.push(peerId);
+					}
+				}
+				conn.send({connections: connections});
+			})
 		});
 	}
 
 	function setUpCanvasForConnection(conn) {
 		conn.on('data', function (data) {
-			console.log("Received data from " + conn.peer + ": " + data);
-			drawPoint(data.point, data.color);
+			debugger;
+			if (data.connections) {
+				debugger;
+			} else if (data.point && data.color) {
+				drawPoint(data.point, data.color);
+			} else {
+				console.log("Received data from " + conn.peer + ": " + data);
+			}
 		});
 	}
 
