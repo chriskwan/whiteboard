@@ -1,8 +1,8 @@
 (function () {
 	var pathToDraw = [];
+	var colors = ["black", "red", "blue", "green"];
 	var drawingArea = document.getElementById("drawingArea");
 	var context = drawingArea.getContext("2d");
-	context.fillStyle = "blue";
 
 	initialize();
 
@@ -30,9 +30,17 @@
 	}
 
 	function drawPath() {
+		context.fillStyle = pickRandomColor();
+
 		for (var i=0; i<pathToDraw.length; i++) {
 			var point = pathToDraw[i];
 			context.fillRect(point.x, point.y, 5, 5);
 		}
+	}
+
+	function pickRandomColor() {
+		// Random number between 0 and length-1
+		var index = Math.floor( ( Math.random() * colors.length ) );
+		return colors[index];
 	}
 })();
