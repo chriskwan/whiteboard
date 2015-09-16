@@ -81,11 +81,31 @@
 	}
 
 	function setUpUI() {
+		createColorRadioButtons();
+
 		// Button to connect to a peer
 		document.getElementById("connectBtn").onclick = function () {
 			var requestedPeer = document.getElementById("peerIdInput").value;
 			connectToPeer(requestedPeer);
 		};
+	}
+
+	function createColorRadioButtons() {
+		var colorChooser = document.getElementById("colorChooser");
+		for (var i=0; i<colors.length; i++) {
+			var color = colors[i];
+			var colorRadioButton = '<input type="radio" name="color" value="' + color + '"';
+			if (color === penColor) {
+				colorRadioButton += ' checked'
+			}
+			colorRadioButton += '>';
+			colorRadioButton += color;
+			colorChooser.innerHTML += colorRadioButton;
+		}
+
+		colorChooser.onclick = function (event) {
+			penColor = event.target.value;
+		}
 	}
 
 	// Sending a connection to a peer (i.e.: you hit the Connect button)
