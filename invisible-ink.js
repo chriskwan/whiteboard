@@ -1,4 +1,5 @@
 (function () {
+	var isDrawing = false;
 	var pathToDraw = [];
 	var colors = ["black", "red", "blue", "green"];
 	var drawingArea = document.getElementById("drawingArea");
@@ -14,19 +15,32 @@
 		drawingArea.onmousedown = function (event) {
 			// Reset path
 			pathToDraw = [];
+
+			isDrawing = true;
 		}
 
 		drawingArea.onmousemove = function (event) {
+			if (!isDrawing) {
+				return;
+			}
+
 			var rect = drawingArea.getBoundingClientRect();
-			pathToDraw.push({
+			var point = {
 				x: event.clientX - rect.left,
 				y: event.clientY - rect.top
-			})
+			};
+			pathToDraw.push(point);
+			drawPoint(point);
 		}
 
 		drawingArea.onmouseup = function (event) {
 			drawPath();
+			isDrawing = false;
 		}
+	}
+
+	function drawPoint(point) {
+		context.fillRect(point.x, point.y, 5, 5);
 	}
 
 	function drawPath() {
@@ -34,7 +48,7 @@
 
 		for (var i=0; i<pathToDraw.length; i++) {
 			var point = pathToDraw[i];
-			context.fillRect(point.x, point.y, 5, 5);
+			drawPoint(point);
 		}
 	}
 
