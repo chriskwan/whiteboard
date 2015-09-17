@@ -149,6 +149,10 @@
 			console.log('My peer ID is: ' + id);
 
 			document.getElementById("mypeerid").innerHTML = id;
+
+			createConnectLink();
+
+			connectToPeerInUrl();
 		});
 
 		// Receiving a connection from a peer (i.e.: they hit the Connect button)
@@ -170,6 +174,37 @@
 				conn.send({connections: connections});
 			})
 		});
+	}
+
+	function createConnectLink() {
+		var connectLink = document.getElementById("connectLink");
+		// Ref: http://stackoverflow.com/a/5817548
+		var urlWithoutQueryString = window.location.href.split('?')[0];
+		connectLink.innerHTML = urlWithoutQueryString + "?connectTo=" + peer.id;
+	}
+
+	function connectToPeerInUrl() {
+		// There's probably a way to do this with one regex,
+		// but I think this is more readable
+		var queryStringParams = window.location.search.split(/[&?]/);
+
+		if (!queryStringParams || !queryStringParams.length) {
+			return;
+		}
+
+		var peerId = null;
+		var param;
+		for (var i=0; i<queryStringParams.length; i++) {
+			param = queryStringParams[i];
+			if (param.indexOf("connectTo=") !== -1) {
+				peerId = param.split("=")[1];
+				break;
+			}
+		}
+
+		if (peerId) {
+			connectToPeer(peerId);
+		}
 	}
 
 	function setUpCanvasForConnection(conn) {
