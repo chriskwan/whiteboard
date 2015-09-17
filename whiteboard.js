@@ -153,11 +153,13 @@
 
 		// Receiving a connection from a peer (i.e.: they hit the Connect button)
 		peer.on('connection', function (conn) {
-			console.log("Connected to by " + conn.peer);
 
 			setUpCanvasForConnection(conn);
 
 			conn.on('open', function () {
+				console.log("Connected to by " + conn.peer);
+				alert("Connected to by " + conn.peer); //cwkTODO put this in a div
+
 				conn.send("thanks for connecting. here are my connections");
 				var connections = [];
 				for (var peerId in peer.connections) {
