@@ -120,11 +120,23 @@
 
 	function setUpUI() {
 		createColorRadioButtons();
+		setUpPeerConnectUI();
+	}
 
-		// Button to connect to a peer
-		document.getElementById("connectBtn").onclick = function () {
-			var requestedPeer = document.getElementById("peerIdInput").value;
+	function setUpPeerConnectUI() {
+		var peerIdInput = document.getElementById("peerIdInput");
+		var connectBtn = document.getElementById("connectBtn")
+
+		connectBtn.onclick = function () {
+			var requestedPeer = peerIdInput.value;
 			connectToPeer(requestedPeer);
+		};
+
+		peerIdInput.onkeyup = function (event) {
+			if (event.keyCode === 13) { // Enter key
+				var requestedPeer = peerIdInput.value;
+				connectToPeer(requestedPeer);
+			}
 		};
 	}
 
