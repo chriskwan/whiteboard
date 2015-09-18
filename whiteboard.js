@@ -173,6 +173,11 @@
 			setUpCanvasForConnection(conn);
 			updateConnectionsList();
 		});
+
+		conn.on('close', function () {
+			alert(conn.peer + " left the whiteboard. Oh well.");
+			updateConnectionsList();
+		});
 	}
 
 	function setUpPeer() {
@@ -211,7 +216,12 @@
 				conn.send({connections: connections});
 
 				updateConnectionsList();
-			})
+			});
+
+			conn.on('close', function () {
+				alert(conn.peer + " left the whiteboard. Oh well.");
+				updateConnectionsList();
+			});
 		});
 	}
 
@@ -221,7 +231,12 @@
 		var connectionListString = "";
 		for (var peerId in peer.connections) {
 			if (peer.connections.hasOwnProperty(peerId)) {
-				connectionListString += peerId + ", ";
+				var peerConnections = peer.connections[peerId];
+				for (var i=0; i<peerConnections.length; i++) {
+					if (peerConnections[i].open) {
+						connectionListString += peerId + ", ";
+					}
+				}
 			}
 		}
 		// Remove trailing comma and space
