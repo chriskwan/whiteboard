@@ -16,36 +16,54 @@
 	}
 
 	function setUpCanvasEvents(){
-		drawingArea.onmousedown = startDraw;
-		drawingArea.ontouchstart = startDraw;
+		drawingArea.addEventListener("mousedown", onMouseDown);
+		drawingArea.addEventListener("touchstart", onMouseDown);
 
-		drawingArea.onmousemove = draw;
-		drawingArea.ontouchmove = draw;
+		drawingArea.addEventListener("mousemove", onMouseMove);
+		drawingArea.addEventListener("touchmove", onTouchMove);
 
-		drawingArea.onmouseup = endDraw;
-		drawingArea.ontouchend = endDraw;
+		drawingArea.addEventListener("mouseup", onMouseUp);
+		drawingArea.addEventListener("touchend", onMouseUp);
 	}
 
-	function startDraw(event) {
+	function onMouseDown(event) {
 		isDrawing = true;
 	}
 
-	function draw(event) {
+	function onMouseMove(event) {
+		draw(event.clientX, event.clientY);
+	}
+
+	function onTouchMove(event) {
+		// Prevent default panning of the page on drag
+		event.preventDefault();
+
+		if (!event.touches.length) {
+			return;
+		}
+
+		var clientX = event.touches[0].clientX;
+		var clientY = event.touches[0].clientY;
+
+		draw(clientX, clientY);
+	}
+
+	function draw(clientX, clientY) {
 		if (!isDrawing) {
 			return;
 		}
 
 		var rect = drawingArea.getBoundingClientRect();
 		var point = {
-			x: event.clientX - rect.left,
-			y: event.clientY - rect.top
+			x: clientX - rect.left,
+			y: clientY - rect.top
 		};
 
 		drawPoint(point, penColor);
 		sendPointToPeers(point, penColor);
 	}
 
-	function endDraw(event) {
+	function onMouseUp(event) {
 		isDrawing = false;
 	}
 
@@ -102,11 +120,23 @@
 
 	function setUpUI() {
 		createColorRadioButtons();
+		setUpPeerConnectUI();
+	}
 
-		// Button to connect to a peer
-		document.getElementById("connectBtn").onclick = function () {
-			var requestedPeer = document.getElementById("peerIdInput").value;
+	function setUpPeerConnectUI() {
+		var peerIdInput = document.getElementById("peerIdInput");
+		var connectBtn = document.getElementById("connectBtn")
+
+		connectBtn.onclick = function () {
+			var requestedPeer = peerIdInput.value;
 			connectToPeer(requestedPeer);
+		};
+
+		peerIdInput.onkeyup = function (event) {
+			if (event.keyCode === 13) { // Enter key
+				var requestedPeer = peerIdInput.value;
+				connectToPeer(requestedPeer);
+			}
 		};
 	}
 
