@@ -12,6 +12,12 @@
 	function initialize() {
 		setUpCanvasEvents();
 		setUpUI();
+
+		// Set the connect link initially so we can see what url is being loaded
+		//cwkTODO remove this when we figure out the https issue
+		document.getElementById("connectLink").innerHTML = window.location;
+		document.getElementById("protocol").innerHTML = window.location.protocol;
+
 		setUpPeer();
 	}
 
