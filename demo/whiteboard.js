@@ -171,6 +171,12 @@
 		// Connection has been established
 		conn.on('open', function () {
 			setUpCanvasForConnection(conn);
+			updateConnectionsList();
+		});
+
+		conn.on('close', function () {
+			alert(conn.peer + " left the whiteboard. Oh well.");
+			updateConnectionsList();
 		});
 	}
 
@@ -208,8 +214,37 @@
 					}
 				}
 				conn.send({connections: connections});
-			})
+
+				updateConnectionsList();
+			});
+
+			conn.on('close', function () {
+				alert(conn.peer + " left the whiteboard. Oh well.");
+				updateConnectionsList();
+			});
 		});
+	}
+
+	function updateConnectionsList() {
+		var connectionList = document.getElementById("connectionList");
+		
+		var connectionListString = "";
+		for (var peerId in peer.connections) {
+			if (peer.connections.hasOwnProperty(peerId)) {
+				var peerConnections = peer.connections[peerId];
+				for (var i=0; i<peerConnections.length; i++) {
+					if (peerConnections[i].open) {
+						connectionListString += peerId + ", ";
+					}
+				}
+			}
+		}
+		// Remove trailing comma and space
+		if (connectionListString.length) {
+			connectionListString = connectionListString.substring(0, connectionListString.length-2);
+		}
+
+		connectionList.innerHTML = connectionListString.length ? connectionListString : "Nobody ( everyone left :( )";
 	}
 
 	function createConnectLink() {
