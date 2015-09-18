@@ -175,7 +175,7 @@
 		});
 
 		conn.on('close', function () {
-			alert(conn.peer + " left the whiteboard. Oh well.");
+			addToStatus(conn.peer + " left the whiteboard. Oh well.");
 			updateConnectionsList();
 		});
 	}
@@ -188,7 +188,7 @@
 
 		// Initialization - ready to receive connections
 		peer.on('open', function (id) {
-			console.log('My peer ID is: ' + id);
+			addToStatus('My peer ID is: ' + id);
 
 			document.getElementById("mypeerid").innerHTML = id;
 
@@ -203,8 +203,8 @@
 			setUpCanvasForConnection(conn);
 
 			conn.on('open', function () {
-				console.log("Connected to by " + conn.peer);
-				alert("Connected to by " + conn.peer); //cwkTODO put this in a div
+				addToStatus("Connected to by " + conn.peer);
+				addToStatus("Connected to by " + conn.peer); //cwkTODO put this in a div
 
 				conn.send("thanks for connecting. here are my connections");
 				var connections = [];
@@ -219,7 +219,7 @@
 			});
 
 			conn.on('close', function () {
-				alert(conn.peer + " left the whiteboard. Oh well.");
+				addToStatus(conn.peer + " left the whiteboard. Oh well.");
 				updateConnectionsList();
 			});
 		});
@@ -291,9 +291,16 @@
 			} else if (data.point && data.color) {
 				drawPoint(data.point, data.color);
 			} else {
-				console.log("Received data from " + conn.peer + ": " + data);
+				addToStatus("Received data from " + conn.peer + ": " + data);
 			}
 		});
+	}
+
+	function addToStatus(message) {
+		var newStatus = document.createElement("p");
+		newStatus.innerHTML = new Date().toTimeString() + ":<br>" + message;
+		var statusArea = document.getElementById("status");
+		statusArea.innerHTML = newStatus.outerHTML + statusArea.innerHTML;
 	}
 
 })();
