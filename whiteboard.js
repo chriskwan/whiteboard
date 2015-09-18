@@ -190,7 +190,7 @@
 		peer.on('open', function (id) {
 			addToStatus('My peer ID is: ' + id);
 
-			document.getElementById("mypeerid").innerHTML = id;
+			document.getElementById("mypeerid").value = id;
 
 			createConnectLink();
 
@@ -251,7 +251,7 @@
 		var connectLink = document.getElementById("connectLink");
 		// Ref: http://stackoverflow.com/a/5817548
 		var urlWithoutQueryString = window.location.href.split('?')[0];
-		connectLink.innerHTML = urlWithoutQueryString + "?connectTo=" + peer.id;
+		connectLink.value = urlWithoutQueryString + "?connectTo=" + peer.id;
 	}
 
 	function connectToPeerInUrl() {
