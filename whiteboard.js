@@ -18,6 +18,7 @@
 		document.getElementById("connectLink").innerHTML = window.location;
 		document.getElementById("protocol").innerHTML = window.location.protocol;
 
+		//cwkTODO move to p2p
 		setUpPeer();
 	}
 
@@ -66,6 +67,8 @@
 		};
 
 		drawPoint(point, penColor);
+
+		//cwkTODO move to p2p
 		sendPointToPeers(point, penColor);
 	}
 
@@ -73,6 +76,7 @@
 		isDrawing = false;
 	}
 
+	//cwkTODO move to p2p
 	function sendPointToPeers(point, color) {
 		for (var currentPeerId in peer.connections) {
 			if (!peer.connections.hasOwnProperty(currentPeerId)) {
@@ -89,6 +93,8 @@
 		}	
 	}
 
+	//cwkTODO move to p2p
+	//cwkTODO split?
 	function sendPathToPeers(path, color) {
 		for (var currentPeerId in peer.connections) {
 			if (!peer.connections.hasOwnProperty(currentPeerId)) {
@@ -126,9 +132,12 @@
 
 	function setUpUI() {
 		createColorRadioButtons();
+
+		//cwkTODO move to p2p
 		setUpPeerConnectUI();
 	}
 
+	//cwkTODO move to p2p
 	function setUpPeerConnectUI() {
 		var peerIdInput = document.getElementById("peerIdInput");
 		var connectBtn = document.getElementById("connectBtn")
@@ -164,6 +173,7 @@
 		}
 	}
 
+	//cwkTODO move to p2p
 	// Sending a connection to a peer (i.e.: you hit the Connect button)
 	function connectToPeer(peerId) {
 		var conn = peer.connect(peerId);
@@ -180,6 +190,7 @@
 		});
 	}
 
+	//cwkTODO move to p2p
 	function setUpPeer() {
 		peer = new Peer({
 			key: 'lwjd5qra8257b9', //cwkTODO this is the demo api key
@@ -225,6 +236,8 @@
 		});
 	}
 
+	//cwkTODO move to p2p
+	//cwkTODO split?
 	function updateConnectionsList() {
 		var connectionList = document.getElementById("connectionList");
 		
@@ -247,6 +260,7 @@
 		connectionList.innerHTML = connectionListString.length ? connectionListString : "Nobody ( everyone left :( )";
 	}
 
+	//cwkTODO move to p2p
 	function createConnectLink() {
 		var connectLink = document.getElementById("connectLink");
 		// Ref: http://stackoverflow.com/a/5817548
@@ -254,6 +268,7 @@
 		connectLink.value = urlWithoutQueryString + "?connectTo=" + peer.id;
 	}
 
+	//cwkTODO move to p2p
 	function connectToPeerInUrl() {
 		// There's probably a way to do this with one regex,
 		// but I think this is more readable
@@ -278,6 +293,7 @@
 		}
 	}
 
+	//cwkTODO move to p2p
 	function setUpCanvasForConnection(conn) {
 		conn.on('data', function (data) {
 			if (data.connections) {
