@@ -10,8 +10,6 @@
 	initialize();
 
 	function initialize() {
-		alert(Whiteboard.p2p.speak);
-
 		setUpCanvasEvents();
 		setUpUI();
 
@@ -187,10 +185,7 @@
 	}
 
 	function setUpPeer() {
-		peer = Whiteboard.p2p.createPeer();
-
-		// Initialization - ready to receive connections
-		peer.on('open', function (id) {
+		peer = Whiteboard.p2p.createPeer(function (id) {
 			addToStatus('My peer ID is: ' + id);
 
 			document.getElementById("mypeerid").value = id;
@@ -198,11 +193,8 @@
 			createConnectLink();
 
 			connectToPeerInUrl();
-		});
-
-		// Receiving a connection from a peer (i.e.: they hit the Connect button)
-		peer.on('connection', function (conn) {
-
+		}, function (conn) {
+			//cwkTODO want to move these into p2p but not sure how
 			setUpCanvasForConnection(conn);
 
 			conn.on('open', function () {
