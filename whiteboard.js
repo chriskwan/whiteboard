@@ -10,6 +10,8 @@
 	initialize();
 
 	function initialize() {
+		alert(Whiteboard.p2p.speak);
+
 		setUpCanvasEvents();
 		setUpUI();
 
@@ -173,29 +175,19 @@
 		}
 	}
 
-	//cwkTODO move to p2p
 	// Sending a connection to a peer (i.e.: you hit the Connect button)
 	function connectToPeer(peerId) {
-		var conn = peer.connect(peerId);
-
-		// Connection has been established
-		conn.on('open', function () {
+		Whiteboard.p2p.connectToPeer(peerId, function (conn) {
 			setUpCanvasForConnection(conn);
 			updateConnectionsList();
-		});
-
-		conn.on('close', function () {
+		}, function (conn) {
 			addToStatus(conn.peer + " left the whiteboard. Oh well.");
 			updateConnectionsList();
 		});
 	}
 
-	//cwkTODO move to p2p
 	function setUpPeer() {
-		peer = new Peer({
-			key: 'lwjd5qra8257b9', //cwkTODO this is the demo api key
-			debug: 3
-		});
+		peer = Whiteboard.p2p.createPeer();
 
 		// Initialization - ready to receive connections
 		peer.on('open', function (id) {
