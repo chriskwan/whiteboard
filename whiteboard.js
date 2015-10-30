@@ -76,26 +76,19 @@
 		isDrawing = false;
 	}
 
+	//cwkTODO is this still needed?
 	//cwkTODO move to p2p
 	function sendPointToPeers(point, color) {
-		for (var currentPeerId in peer.connections) {
-			if (!peer.connections.hasOwnProperty(currentPeerId)) {
-				return;
-			}
+		sendDataToPeers({point: point, color: color});
+	}
 
-			var connectionsWithCurrentPeer = peer.connections[currentPeerId];
-
-			// It's possible to have multiple connections with the same peer,
-			// so send on all of them
-			for (var i=0; i<connectionsWithCurrentPeer.length; i++) {
-				connectionsWithCurrentPeer[i].send({point: point, color: color});
-			}
-		}	
+	//cwkTODO move to p2p?
+	function sendPathToPeers(path, color) {
+		sendDataToPeers({path: path, color: color});
 	}
 
 	//cwkTODO move to p2p
-	//cwkTODO split?
-	function sendPathToPeers(path, color) {
+	function sendDataToPeers(data) {
 		for (var currentPeerId in peer.connections) {
 			if (!peer.connections.hasOwnProperty(currentPeerId)) {
 				return;
@@ -106,7 +99,7 @@
 			// It's possible to have multiple connections with the same peer,
 			// so send on all of them
 			for (var i=0; i<connectionsWithCurrentPeer.length; i++) {
-				connectionsWithCurrentPeer[i].send({path: path, color: color});
+				connectionsWithCurrentPeer[i].send(data);
 			}
 		}
 	}
